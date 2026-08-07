@@ -1,0 +1,14 @@
+{
+  "name": "seteeseteengenharia",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve . -l 8085",
+    "start": "npx serve . -l 8085",
+    "preview": "npx serve . -l 8085"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
