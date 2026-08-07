@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# Build artifacts
+dist/
+build/
