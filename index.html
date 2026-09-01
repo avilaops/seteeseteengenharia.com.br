@@ -2,13 +2,59 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9JR6GNRZKE"></script>
+    <!-- Google Tag Manager — container GTM-5W4P7RDC (TagFlow), que publica a
+         configuração do mesmo GA4 G-9JR6GNRZKE que estava aqui como gtag.js
+         direto. Trocado pelo container para que Pixel, conversões de Ads e
+         eventos de lead entrem sem novo deploy: este site é HTML estático
+         publicado por GitHub Actions, e cada tag nova custava um commit. -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5W4P7RDC');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- generate_lead: todo clique que leva a pessoa para um canal de
+         atendimento. O orçamento fecha no WhatsApp, fora de qualquer medição —
+         o clique de saída é o último sinal observável, e é ele que faz o papel
+         de conversão no GA4.
+
+         Delegado no document porque a página é montada por React a partir do
+         bundle em assets/: um listener por elemento perderia tudo que for
+         renderizado depois, e o `src/` desse build nem está neste repositório. -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-9JR6GNRZKE');
+      (function () {
+        function canal(href) {
+          if (/wa\.me|whatsapp\.com/i.test(href)) return 'whatsapp';
+          if (/^tel:/i.test(href)) return 'telefone';
+          if (/^mailto:/i.test(href)) return 'email';
+          if (/instagram\.com/i.test(href)) return 'instagram';
+          if (/google\.[^/]+\/maps|maps\.app\.goo\.gl/i.test(href)) return 'maps';
+          return null;
+        }
+
+        document.addEventListener('click', function (evento) {
+          var alvo = evento.target;
+          if (!alvo || !alvo.closest) return;
+
+          var link = alvo.closest('a');
+          if (!link || !link.href) return;
+
+          var origem = canal(link.href);
+          if (!origem) return;
+
+          var texto = (link.textContent || '').trim().replace(/\s+/g, ' ');
+
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'generate_lead',
+            lead_source: origem,
+            lead_subject: texto ? texto.slice(0, 80) : window.location.pathname,
+            link_url: link.href,
+            page_path: window.location.pathname
+          });
+        });
+      })();
     </script>
 
     <link rel="icon" type="image/png" href="./favicon-96x96.png" sizes="96x96" />
@@ -56,6 +102,10 @@
     <link rel="stylesheet" crossorigin href="./assets/index-B30CuZ01.css">
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5W4P7RDC"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"7bcf37a71527488b9819d15c6307fcc7","r":1}' crossorigin="anonymous"></script>
 </body>

@@ -1,6 +1,6 @@
-# Sete & Sete Engenharia — Website
+# Sete & Sete Engenharia: Website
 
-Website oficial da **Sete & Sete Engenharia** (Eng. Letícia Rossini / Silveira Cruz) — Projetos arquitetônicos, agropecuários, crédito rural, avaliação de imóveis e perícia técnica em Votuporanga-SP e região.
+Website oficial da **Sete & Sete Engenharia** (Eng. Letícia Rossini / Silveira Cruz), Projetos arquitetônicos, agropecuários, crédito rural, avaliação de imóveis e perícia técnica em Votuporanga-SP e região.
 
 ## 🚀 Repositório e Deploy
 
