@@ -22,7 +22,7 @@ Website oficial da **Sete & Sete Engenharia** (Eng. Letícia Rossini / Silveira 
 .
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml       # Pipeline de CI/CD para GitHub Pages
+│       └── pages.yml        # Pipeline de CI/CD para GitHub Pages
 ├── assets/                  # Bundles de JavaScript e CSS
 ├── CNAME                    # Configuração de domínio personalizado
 ├── favicon.svg              # Ícone vetorial do site
@@ -40,7 +40,8 @@ Website oficial da **Sete & Sete Engenharia** (Eng. Letícia Rossini / Silveira 
 
 1. Acesse **Settings > Pages** no repositório GitHub `avilaops/seteeseteengenharia`.
 2. Em **Build and deployment > Source**, selecione **GitHub Actions**.
-3. O workflow `.github/workflows/deploy.yml` será disparado automaticamente a cada push na branch `main`.
+3. O workflow `.github/workflows/pages.yml` será disparado automaticamente a cada push na branch `main`.
+4. Em **Custom domain**, informe `seteeseteengenharia.com.br` e marque **Enforce HTTPS**.
 
 ---
 © Ávila Ops / Sete & Sete Engenharia. Todos os direitos reservados.
