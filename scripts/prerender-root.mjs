@@ -93,6 +93,7 @@ try {
     assert.deepEqual(erros, [], 'O bundle público não pode apresentar erro de execução.');
     const markup = await pagina.locator('#root').innerHTML();
     assert.ok(!/<script\b/i.test(markup), 'O snapshot da root não pode duplicar scripts.');
+    await writeFile(join(evidencias, 'original-root.html'), markup);
     const captura = await pagina.screenshot({ fullPage: true, animations: 'disabled' });
     await writeFile(join(evidencias, 'antes.png'), captura);
     const lugar = lugares[0];
@@ -119,6 +120,18 @@ try {
       const { contexto, pagina, erros } = await abrir(ativo);
       if (ativo) await pagina.waitForFunction(titulo => document.title === titulo, baseline.titulo);
       const publico = await lerPublico(pagina);
+      const nome = ativo ? 'javascript-ligado' : 'javascript-desligado';
+      await writeFile(join(evidencias, nome + '-root.html'), await pagina.locator('#root').innerHTML());
+      const diagnostico = await pagina.locator('#root').evaluate(raiz => ({
+        atributosHtml: [...document.documentElement.attributes].map(a => [a.name, a.value]),
+        atributosBody: [...document.body.attributes].map(a => [a.name, a.value]),
+        viewport: [innerWidth, innerHeight, document.documentElement.scrollHeight],
+        elementos: [...raiz.querySelectorAll('header, main, h1, h2, img, footer')].map(e => {
+          const r = e.getBoundingClientRect(); const c = getComputedStyle(e);
+          return { tag: e.tagName, texto: e.textContent.slice(0, 80), rect: [r.x, r.y, r.width, r.height], font: c.fontFamily, display: c.display, complete: e.complete, src: e.getAttribute('src') };
+        }),
+      }));
+      await writeFile(join(evidencias, nome + '-layout.json'), JSON.stringify(diagnostico, null, 2));
       assert.equal(publico.texto, baseline.texto, 'O texto muda com JavaScript ' + ativo);
       assert.equal(publico.h1, baseline.h1);
       assert.deepEqual(erros, []);

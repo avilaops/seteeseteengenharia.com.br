@@ -46,9 +46,16 @@ jobs:
       - name: Verify root content, visual and hash routing
         timeout-minutes: 5
         run: node scripts/prerender-root.mjs --modo verificar
+      - name: Preserve prerender verification evidence
+        if: always() && hashFiles('.prerender-check/baseline.json') != ''
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          name: prerender-evidence
+          path: .prerender-check
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: _site
+          include-hidden-files: true
   deploy:
     needs: build
     if: github.event_name != 'pull_request'
