@@ -80,9 +80,7 @@ async function lerPublico(pagina) {
 }
 
 try {
-  // LCD subpixel AA varies between parsed HTML and CSR paint on Linux. Keep
-  // grayscale rasterization deterministic; screenshot equality remains exact.
-  navegador = await chromium.launch({ headless: true, args: ['--disable-lcd-text'] });
+  navegador = await chromium.launch({ headless: true });
   await mkdir(evidencias, { recursive: true });
   if (values.modo === 'gerar') {
     const original = await readFile(index, 'utf8');
@@ -93,7 +91,26 @@ try {
     const publico = await lerPublico(pagina);
     assert.ok(publico.texto.length > 1000, 'O conteúdo público real ainda não foi renderizado.');
     assert.deepEqual(erros, [], 'O bundle público não pode apresentar erro de execução.');
-    const markup = await pagina.locator('#root').innerHTML();
+    // React creates adjacent Text nodes (for example the copyright year).
+    // innerHTML alone merges them when parsed, changing text shaping. Empty
+    // comments preserve those original boundaries without touching the renderer.
+    const snapshot = await pagina.locator('#root').evaluate(raiz => {
+      const copia = raiz.cloneNode(true);
+      let fronteiras = 0;
+      for (const elemento of [copia, ...copia.querySelectorAll('*')]) {
+        let anterior;
+        for (const filho of [...elemento.childNodes]) {
+          if (anterior?.nodeType === Node.TEXT_NODE && filho.nodeType === Node.TEXT_NODE) {
+            elemento.insertBefore(document.createComment(''), filho);
+            fronteiras++;
+          }
+          anterior = filho;
+        }
+      }
+      if (copia.textContent !== raiz.textContent) throw new Error('O snapshot alterou o texto público.');
+      return { markup: copia.innerHTML, fronteiras };
+    });
+    const { markup } = snapshot;
     assert.ok(!/<script\b/i.test(markup), 'O snapshot da root não pode duplicar scripts.');
     await writeFile(join(evidencias, 'original-root.html'), markup);
     const captura = await pagina.screenshot({ fullPage: true, animations: 'disabled' });
@@ -103,7 +120,7 @@ try {
     const sufixo = original.slice(lugar.index + lugar[0].length);
     const abertura = lugar[0].slice(0, lugar[0].indexOf('>') + 1);
     await writeFile(index, prefixo + abertura + markup + '</div>' + sufixo);
-    await writeFile(join(evidencias, 'baseline.json'), JSON.stringify({ ...publico, assets, prefixo, sufixo, screenshot: hash(captura) }, null, 2));
+    await writeFile(join(evidencias, 'baseline.json'), JSON.stringify({ ...publico, assets, prefixo, sufixo, fronteirasTexto: snapshot.fronteiras, screenshot: hash(captura) }, null, 2));
     await contexto.close();
     console.log(JSON.stringify({ modo: values.modo, caracteres: publico.texto.length, rota: '/', assetsPreservados: Object.keys(assets).length, requestsExternosPermitidos, requestsExternosBloqueados }));
   } else {

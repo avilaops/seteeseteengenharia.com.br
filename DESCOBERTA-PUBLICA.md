@@ -10,7 +10,7 @@ A fonte editorial React não está neste repositório: o site atual usa `assets/
 
 Depois da cópia existente para `_site`, o CI instala Playwright **1.62.0** isoladamente em `.prerender-deps`, com scripts de instalação npm desativados, e instala o Chromium correspondente. `scripts/prerender-root.mjs --modo gerar` serve somente o artefato público em loopback, espera o h1 e a identidade reais da home e captura apenas `#root.innerHTML`. Não navega por contatos, não preenche campos e recusa root com formulário ou senha. Todo tráfego externo e todo método diferente de GET/HEAD são bloqueados.
 
-O markup capturado é inserido apenas em `_site/index.html`. Head, scripts, markup externo à root e assets são preservados. Não há reimplementação de conteúdo, edição do bundle minificado, troca por framework ou bypass do validador de páginas públicas do Core.
+O markup capturado é inserido apenas em `_site/index.html`. Comentários vazios na cópia preservam fronteiras de Text nodes adjacentes criados pelo React; sem eles, o parser de HTML une os nós e altera o shaping do copyright. O texto permanece idêntico e o DOM do renderer original não é alterado. Head, scripts, markup externo à root e assets são preservados. Não há reimplementação de conteúdo, edição do bundle minificado, troca por framework ou bypass do validador de páginas públicas do Core.
 
 ## Publicador e verificação
 
@@ -29,7 +29,7 @@ Depois da geração, `scripts/prerender-root.mjs --modo verificar` confere:
 
 O `createRoot` existente substitui o snapshot quando o JavaScript inicializa. O CI precisa comprovar equivalência visual e de conteúdo antes de enviar o artefato; qualquer divergência falha antes do upload/deploy. Evidências ficam em `.prerender-check`, fora de `_site`. Não foram executados build, browser de build ou testes de projeto localmente nesta implementação; a execução destes checks é do CI.
 
-O rasterizador de fontes do ensaio usa antialiasing em tons de cinza para evitar variação LCD entre pintura CSR e HTML parseado. A comparação de screenshots permanece estrita, sem tolerância ou máscara. DOM, imagens e diagnóstico de layout ficam no artefato CI separado `prerender-evidence`. O upload público inclui arquivos ocultos para preservar `.well-known`; o checkout do publicador e as evidências não entram em `_site`.
+A comparação de screenshots permanece estrita, sem tolerância, máscara ou alteração do rasterizador. DOM, imagens e diagnóstico de layout ficam no artefato CI separado `prerender-evidence`. O upload público inclui arquivos ocultos para preservar `.well-known`; o checkout do publicador e as evidências não entram em `_site`.
 
 As rotas por hash continuam responsabilidade do bundle atual. O sitemap existente não é reescrito nem convertido em páginas HTML fictícias. O módulo WebMCP central lê somente conteúdo e links públicos; não envia formulários nem executa transações. Browsers sem API preservam a navegação e o visual.
 
