@@ -29,6 +29,8 @@ Depois da geração, `scripts/prerender-root.mjs --modo verificar` confere:
 
 O `createRoot` existente substitui o snapshot quando o JavaScript inicializa. O CI precisa comprovar equivalência visual e de conteúdo antes de enviar o artefato; qualquer divergência falha antes do upload/deploy. Evidências ficam em `.prerender-check`, fora de `_site`. Não foram executados build, browser de build ou testes de projeto localmente nesta implementação; a execução destes checks é do CI.
 
+O rasterizador de fontes do ensaio usa antialiasing em tons de cinza para evitar variação LCD entre pintura CSR e HTML parseado. A comparação de screenshots permanece estrita, sem tolerância ou máscara. DOM, imagens e diagnóstico de layout ficam no artefato CI separado `prerender-evidence`. O upload público inclui arquivos ocultos para preservar `.well-known`; o checkout do publicador e as evidências não entram em `_site`.
+
 As rotas por hash continuam responsabilidade do bundle atual. O sitemap existente não é reescrito nem convertido em páginas HTML fictícias. O módulo WebMCP central lê somente conteúdo e links públicos; não envia formulários nem executa transações. Browsers sem API preservam a navegação e o visual.
 
 A condição que impede deploy de pull requests permanece. Para rollback, restaure o workflow e o `index.html` anteriores e publique o artefato anterior pelo Pages, sem alterar DNS ou Jekyll. Após a publicação aprovada, confira o HTML, MIME JSON/JavaScript, recursos anunciados e navegação no domínio real.

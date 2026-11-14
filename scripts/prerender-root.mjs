@@ -80,7 +80,9 @@ async function lerPublico(pagina) {
 }
 
 try {
-  navegador = await chromium.launch({ headless: true });
+  // LCD subpixel AA varies between parsed HTML and CSR paint on Linux. Keep
+  // grayscale rasterization deterministic; screenshot equality remains exact.
+  navegador = await chromium.launch({ headless: true, args: ['--disable-lcd-text'] });
   await mkdir(evidencias, { recursive: true });
   if (values.modo === 'gerar') {
     const original = await readFile(index, 'utf8');
