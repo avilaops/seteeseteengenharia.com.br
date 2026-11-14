@@ -34,4 +34,3 @@ A comparação de screenshots permanece estrita, sem tolerância, máscara ou al
 As rotas por hash continuam responsabilidade do bundle atual. O sitemap existente não é reescrito nem convertido em páginas HTML fictícias. O módulo WebMCP central lê somente conteúdo e links públicos; não envia formulários nem executa transações. Browsers sem API preservam a navegação e o visual.
 
 A condição que impede deploy de pull requests permanece. Para rollback, restaure o workflow e o `index.html` anteriores e publique o artefato anterior pelo Pages, sem alterar DNS ou Jekyll. Após a publicação aprovada, confira o HTML, MIME JSON/JavaScript, recursos anunciados e navegação no domínio real.
-
