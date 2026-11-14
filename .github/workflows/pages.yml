@@ -15,11 +15,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
       - name: Separa os arquivos publicados
         run: |
           mkdir _site
           cp "logo.png" "avilaops-indexnow-20260730.txt" "site.webmanifest" "logo.svg" "sitemap.xml" "favicon-96x96.png" "logo_full.jpg" "index.html" "logo_icon.png" "og-default.png" "favicon.svg" "favicon.ico" "apple-touch-icon.png" "robots.txt" _site/
           cp -r assets img _site/
+      - name: Check out public discovery publisher
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: avilaops/motor-web
+          ref: d5067bbbe3522f459367af3b58b4298324801f82
+          path: .publicacao-descoberta
+          persist-credentials: false
+      - name: Install public discovery publisher
+        working-directory: .publicacao-descoberta
+        run: npm ci --ignore-scripts --omit=dev
+      - name: Install pinned prerender browser
+        timeout-minutes: 5
+        run: |
+          npm install --prefix .prerender-deps --ignore-scripts --no-package-lock --no-audit --no-fund --save-exact playwright@1.62.0
+          node .prerender-deps/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Prerender the public root
+        timeout-minutes: 5
+        run: node scripts/prerender-root.mjs --modo gerar
+      - name: Generate public discovery and WebMCP
+        run: node .publicacao-descoberta/bin/publicar-descoberta.mjs --diretorio _site --origem https://seteeseteengenharia.com.br
+      - name: Verify root content, visual and hash routing
+        timeout-minutes: 5
+        run: node scripts/prerender-root.mjs --modo verificar
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: _site

@@ -12,3 +12,7 @@ Thumbs.db
 # Build artifacts
 dist/
 build/
+_site/
+.publicacao-descoberta/
+.prerender-deps/
+.prerender-check/
