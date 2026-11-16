@@ -36,7 +36,7 @@
       "publicPaths": [
         "/"
       ],
-      "consentAdapter": "avila",
+      "consentAdapter": "zaraz",
       "hashRoutes": [
         "/",
         "/sobre",
