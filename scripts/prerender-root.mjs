@@ -57,7 +57,10 @@ async function abrir(javaScriptEnabled) {
   const contexto = await navegador.newContext({ javaScriptEnabled, viewport: { width: 1280, height: 900 }, locale: 'pt-BR', serviceWorkers: 'block' });
   await contexto.route('**/*', async rota => {
     const pedido = rota.request();
-    if (new URL(pedido.url()).origin === origemLocal && ['GET', 'HEAD'].includes(pedido.method())) await rota.continue();
+    // Consent UI is tested separately; this fixture compares the original public
+    // content with and without JavaScript and must not include an optional overlay.
+    if (new URL(pedido.url()).pathname.startsWith('/measurement/')) await rota.fulfill({ contentType: 'application/javascript', body: '' });
+    else if (new URL(pedido.url()).origin === origemLocal && ['GET', 'HEAD'].includes(pedido.method())) await rota.continue();
     else { requestsExternosBloqueados++; await rota.fulfill({ status: 204 }); }
   });
   const pagina = await contexto.newPage();
