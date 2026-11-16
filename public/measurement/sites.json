@@ -1,0 +1,50 @@
+{
+  "operations": {
+    "institutional": {
+      "name": "Avila • Institucionais",
+      "id": "GTM-MMTBHNRN"
+    },
+    "ecommerce": {
+      "name": "Avila • E-commerce",
+      "id": "GTM-M6JQNNMS"
+    },
+    "platform": {
+      "name": "Avila • Plataforma de e-commerce",
+      "id": "GTM-KLP5RSCZ"
+    },
+    "saas": {
+      "name": "Avila • SaaS",
+      "id": "GTM-NQSKDVVG"
+    }
+  },
+  "sites": [
+    {
+      "category": "institucional",
+      "status": "Não informado",
+      "domain": "seteeseteengenharia.com.br",
+      "gatewayPath": "/avmetrics/",
+      "operation": "institutional",
+      "aliases": [
+        "www.seteeseteengenharia.com.br"
+      ],
+      "applicationPrefixes": [],
+      "publicPrefixes": [],
+      "routeStatus": "pending-inventory",
+      "measurementId": "G-0XXYSQSLRE",
+      "property": "properties/564371476",
+      "stream": "properties/564371476/dataStreams/16344277582",
+      "publicPaths": [
+        "/"
+      ],
+      "consentAdapter": "avila",
+      "hashRoutes": [
+        "/",
+        "/sobre",
+        "/servicos",
+        "/portfolio",
+        "/blog",
+        "/contato"
+      ]
+    }
+  ]
+}

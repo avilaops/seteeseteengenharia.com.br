@@ -25,6 +25,7 @@ jobs:
           mkdir _site
           cp "logo.png" "avilaops-indexnow-20260730.txt" "site.webmanifest" "logo.svg" "sitemap.xml" "favicon-96x96.png" "logo_full.jpg" "index.html" "logo_icon.png" "og-default.png" "favicon.svg" "favicon.ico" "apple-touch-icon.png" "robots.txt" _site/
           cp -r assets img _site/
+          cp -r public/measurement _site/
       - name: Check out public discovery publisher
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
