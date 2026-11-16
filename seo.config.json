@@ -1,0 +1,13 @@
+{
+  "origem": "https://seteeseteengenharia.com.br",
+  "nome": "Sete & Sete Engenharia",
+  "idioma": "pt-BR",
+  "imagem": "/og-default.png",
+  "icone": "/favicon.svg",
+  "removerTagsLegadas": true,
+  "fontesGlobais": [
+    "seo.config.json",
+    "index.html",
+    "assets"
+  ]
+}
