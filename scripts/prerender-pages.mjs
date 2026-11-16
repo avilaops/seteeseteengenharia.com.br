@@ -49,6 +49,10 @@ try {
     await page.locator('#root main h1').first().waitFor({ state: 'visible' });
     const snapshot = await page.locator('#root').evaluate((element, knownRoutes) => {
       const clone = element.cloneNode(true);
+      for (const image of clone.querySelectorAll('img[src]')) {
+        const source = image.getAttribute('src');
+        if (source && !/^(?:[a-z]+:|\/)/i.test(source)) image.setAttribute('src', '/' + source.replace(/^\.\//, ''));
+      }
       for (const anchor of clone.querySelectorAll('a[href^="#/"]')) {
         const [slug, section] = anchor.getAttribute('href').slice(2).split('#');
         if (knownRoutes.includes(slug)) anchor.setAttribute('href', (slug ? '/' + slug + '/' : '/') + (section ? '#' + section : ''));
@@ -72,6 +76,7 @@ try {
   await writeFile(join(root, 'hash-routes.js'), await readFile(new URL('./hash-routes.js', import.meta.url)));
   for (const { slug, markup, h1, description } of snapshots) {
     let html = original.slice(0, mount.startTag.endOffset) + markup + original.slice(mount.endTag.startOffset);
+    html = html.replace(/<head>/i, '<head><base href="/">');
     html = html.replace(/<title>[^]*?<\/title>/i, '<title>' + escape(h1 + ' • Sete & Sete Engenharia') + '</title>');
     html = html.replace(/<meta\s+name=["']description["'][^>]*>/i, '<meta name="description" content="' + escape(description || h1) + '">');
     html = html.replace(/<script\b/i, '<script src="/hash-routes.js"></script>\n<script');
@@ -92,6 +97,15 @@ try {
       assert.equal(response.status(), 200);
       assert.equal((await page.locator('main h1').first().textContent()).replace(/\s+/g, ' ').trim(), snapshot.h1);
       assert.deepEqual(errors, [], 'Erro de execução em ' + path);
+      const imageFailures = await page.evaluate(async () => {
+        const results = await Promise.all([...document.images].map(async image => {
+          const url = image.currentSrc || image.src;
+          const response = await fetch(url);
+          return response.ok ? null : url;
+        }));
+        return results.filter(Boolean);
+      });
+      assert.deepEqual(imageFailures, [], 'Imagem relativa inválida em ' + path);
       evidence.push({ path, javaScriptEnabled, h1: snapshot.h1 });
       await page.close();
     }
